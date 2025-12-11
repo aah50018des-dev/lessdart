@@ -1,84 +1,50 @@
+//import 'dart:io';
+
 import 'package:flutter/material.dart';
-import 'package:shared_preferences/shared_preferences.dart';
+import 'package:mad_lesson1_2425/test.dart';
 
 void main() {
-  runApp(SettingsPage());
-}
-class SettingsPage extends StatefulWidget {
-  @override
-  _SettingsPageState createState() => _SettingsPageState();
+  runApp(ProfileApp());
 }
 
-class _SettingsPageState extends State<SettingsPage> {
-  TextEditingController _usernameController = TextEditingController();
-  bool _darkModeEnabled = false;
+class ProfileApp extends StatefulWidget {
+  @override
+  _ProfileAppState createState() => _ProfileAppState();
+}
+
+class _ProfileAppState extends State<ProfileApp> {
+  final TextEditingController _controller = TextEditingController();
 
   @override
-  void initState() {
-    super.initState();
-    _loadSettings();
-  }
-
-  // Method to load saved settings
-  Future<void> _loadSettings() async {
-    final prefs = await SharedPreferences.getInstance();
-    setState(() {
-      _usernameController.text = prefs.getString('username') ?? '';
-      _darkModeEnabled = prefs.getBool('darkMode') ?? false;
-    });
-  }
-
-  // Method to save settings
-  Future<void> _saveSettings() async {
-    final prefs = await SharedPreferences.getInstance();
-    await prefs.setString('username', _usernameController.text);
-    await prefs.setBool('darkMode', _darkModeEnabled);
-    print('Settings saved');
-  }
-
-  // Method to Delete settings
-  Future<void> _clearSettings() async {
-    final prefs = await SharedPreferences.getInstance();
-    await prefs.remove('username'); // Remove username
-    await prefs.remove('darkMode'); // Remove dark mode preference
+  void dispose() {
+    // Step 4: Dispose of the controller when it’s no longer needed
+    _controller.dispose();
+    super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
       home: Scaffold(
-        appBar: AppBar(title: Text('Settings')),
+        appBar: AppBar(title: Text('TextEditingController Example')),
         body: Padding(
           padding: const EdgeInsets.all(16.0),
           child: Column(
             children: [
               TextField(
-                controller: _usernameController,
-                decoration: InputDecoration(labelText: 'Username'),
+                // Step 2: Assign the controller to the TextField
+                controller: _controller,
+                decoration: InputDecoration(labelText: 'Enter some text'),
               ),
-              SwitchListTile(
-                title: Text('Dark Mode'),
-                value: _darkModeEnabled,
-                onChanged: (bool value) {
-                  setState(() {
-                    _darkModeEnabled = value;
-                  });
+              SizedBox(height: 20),
+              ElevatedButton(
+                onPressed: () {
+                  // Step 3: Access the text value from the controller
+                  print('Text entered: ${_controller.text}');
+      
                 },
+                child: Text('Print Text'),
               ),
-              Row(
-                children: [
-                  ElevatedButton(
-                    onPressed: _saveSettings,
-                    child: Text('Save Settings'),
-                  ),
-                  SizedBox(width: 20,),
-                  ElevatedButton(
-                    onPressed: _clearSettings,
-                    child: Text('clear setting'),
-                  ),
-                ],
-              ),
-
             ],
           ),
         ),
